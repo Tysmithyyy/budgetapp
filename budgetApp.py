@@ -5,6 +5,7 @@ import pandas as pd
 from pathlib import Path
 import pickle
 
+st.write(st.experimental_user['email'])
 # names = ["Tyler Smith", "Ava"]
 # usernames = ["tysmithyyy", "aavvaa"]
 
