@@ -1,0 +1,13 @@
+credentials:
+  usernames:
+    jsmith:
+      email: tylerelijahsmith15@gmail.com
+      name: Tyler Smith
+      password: admin
+cookie:
+  expiry_days: 30
+  key: budget_app_auth
+  name: budget_app_auth
+preauthorized:
+  emails:
+  - tylerelijahsmith15@gmail.com
