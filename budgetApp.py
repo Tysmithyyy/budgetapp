@@ -1,7 +1,6 @@
 import streamlit as st
 import psycopg2
 import pandas as pd
-import locale
 
 st.set_page_config(page_title="Smith Budgets", page_icon=":money_with_wings:", layout="centered", initial_sidebar_state="auto", menu_items=None)
 
@@ -32,7 +31,7 @@ def get_user_email_list():
 
 useremail = st.experimental_user['email']
 user_email_list = get_user_email_list()
-st.title("Smith Budgets")
+st.title(":money_with_wings: Smith Budgets")
 
 
 if useremail not in user_email_list:
@@ -55,7 +54,6 @@ if useremail in user_email_list:
 
     budgets = run_query(f"SELECT * from budgettable WHERE email = '{useremail}' OR sharewith = '{useremail}';")
     transactions = run_query("SELECT * from transactiontable")
-    st.write(f"number of transactions: {len(transactions)}")
 
     def close_select_container():
         if st.session_state.select:
@@ -79,8 +77,7 @@ if useremail in user_email_list:
             budget_names.append("Select a Budget")
             for row in budgets:
                 budget_names.append(row[0])
-            budget_name = st.selectbox("", key="budget_name", options=budget_names, index=0)
-            # st.session_state.budget_name = budget_name
+            budget_name = st.selectbox("Select Budget", key="budget_name", options=budget_names, index=0, label_visibility="hidden")
 
     if create_budget or st.session_state.submitted:
         st.session_state.submitted = True
@@ -113,7 +110,6 @@ if useremail in user_email_list:
 
     if st.session_state.budget_name == "Select a Budget":
         st.subheader("Please Create or Select a budget")
-        st.subheader(st.session_state.budget_name)
     
     else:
         budget_df = pd.read_sql(f"SELECT * FROM transactionTable WHERE budgetName = '{st.session_state.budget_name}'", conn)
@@ -143,7 +139,6 @@ if useremail in user_email_list:
                 new_transaction_ammount = st.number_input("Transaction Ammount",step=0.1)
                 new_transaction_note = st.text_area("Note/Description", height=2)
                 new_budget_allotment = balance - new_transaction_ammount
-                st.write(new_budget_allotment)
                 if st.form_submit_button("Add Transaction"):
                     run_command(f"INSERT INTO public.transactiontable (transactionid, budgetname, transactionammount, transactiondate, note) \
                                 VALUES ('{new_transaction_id}', '{budget_name}', '{new_transaction_ammount}', '{new_transaction_date}', '{new_transaction_note}')")
@@ -152,32 +147,21 @@ if useremail in user_email_list:
 
         with tab3:
             st.header("Budget Settings")
-            if st.button("Delete Budget", type="primary"):
-                run_command(f"DELETE FROM budgettable WHERE budgetname = '{budget_name}'")
-                st.experimental_rerun()
+            
+            col1, col2 = st.columns(2)
+        
+            with col1:
+                st.text_input("Add/Change user to share this budget with")
+                if st.button("Share"):
+                    run_command(f"UPDATE budgettable SET sharwith = {new_budget_allotment} WHERE budgetname = '{budget_name}'")
+            with col2:
+                if st.button("Delete Budget", type="primary"):
+                    run_command(f"DELETE FROM budgettable WHERE budgetname = '{budget_name}'")
+                    st.experimental_rerun()
+                if st.button("Reset Budget (Delete all transactions)", type="primary"):
+                    run_command(f"DELETE FROM transactiontable WHERE budgetname = '{budget_name}'")
+                    st.experimental_rerun()
 
 #     UPDATE employees SET sales_count = sales_count + 1 FROM accounts
 #       WHERE accounts.name = 'Acme Corporation'
 #       AND employees.id = accounts.sales_person;
-    # tab1, tab2, tab3 = st.tabs(["View Budget", "Add Transaction", "Budget Settings"])
-
-    # with tab1:
-    #     st.header("View Budget")
-
-    # with tab2:
-    #     st.header("Add Transaction")
-    #     new_transaction_date = st.date_input("Transaction Date")
-    #     new_transaction_ammount = st.number_input("Transaction Ammount",step=0.1)
-    #     new_transaction_note = st.text_area("Note/Description", height=2)
-    #     if st.button("Add Transaction"):
-    #         run_command(f"INSERT INTO public.transactiontable (transactionid, budgetname, transactionammount, transactiondate, note) \
-    #                     VALUES ('{new_transaction_id}', '{budget_name}', '{new_transaction_ammount}', '{new_transaction_date}', '{new_transaction_note}')")
-    #         st.experimental_rerun()
-
-    # with tab3:
-    #     st.header("Budget Settings")
-    # SIDEBAR
-    # authenticator.logout("Logout", "sidebar")
-    # st.sidebar.title("Welcome")
-    # st.sidebar.header("This is the sidebar")
-    # st.sidebar.sub
