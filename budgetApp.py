@@ -122,8 +122,9 @@ if useremail in user_email_list:
         dash_display.set_index('ID', inplace=True)
         budgets_df = pd.read_sql(f"SELECT * from budgettable WHERE email = '{useremail}' OR sharewith = '{useremail}';", conn, index_col='budgetname')
         balance = float(budgets_df.loc[f'{st.session_state.budget_name}', 'budgetallotment'])
-        locale.setlocale(locale.LC_ALL, '')
-        balance_currency = locale.currency(balance, grouping=True)
+        # locale.setlocale(locale.LC_ALL, '')
+        # balance_currency = locale.currency(balance, grouping=True)
+        balance_currency = '${:,.2f}'.format(balance)
         st.subheader(st.session_state.budget_name)
         tab1, tab2, tab3 = st.tabs(["View Budget", "Add Transaction", "Budget Settings"])
 
@@ -131,7 +132,7 @@ if useremail in user_email_list:
             st.header("View Budget")
             col1, col2, col3 = st.columns(3)
             col1.metric("Balance", balance_currency)
-            st.dataframe(dash_display)
+            st.dataframe(dash_display, use_container_width=True)
 
         with tab2:
             st.header("Add Transaction")
