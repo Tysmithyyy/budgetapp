@@ -6,13 +6,10 @@ name = "pypi"
 [packages]
 streamlit = "*"
 psycopg2-binary = "*"
-streamlit-authenticator = "*"
-pyautogui = "*"
 
 [dev-packages]
 streamlit = "*"
 psycopg2-binary = "*"
-streamlit-authenticator = "*"
 
 [requires]
 python_version = "3.9"
